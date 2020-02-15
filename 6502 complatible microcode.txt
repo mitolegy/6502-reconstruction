@@ -1,0 +1,456 @@
+
+
+
+Microcode commands
+Memonic		Full name					  Code			Function
+
+ISF		=	Instruction Fetch			= 0x01
+SOP		=	Set Operand Register		= 0x02
+ADD		=	Addition operation			= 0x03
+ZPL		=	Zero Page Load				= 0x04
+ZPX		=	Zero Page Load + X			= 0x05
+ABL		=	Absolute Load				= 0x06
+ABX		=	Absolute Load + X			= 0x07
+ABY		=	Absolute Load + Y			= 0x08
+LIX		=	Load Indexed Address		= 0x09
+LXY		= 	Load Indexed Indirect		= 0x0A
+LYX		=	Load Indirect Indexed		= 0x0B
+AND		=	Logical AND Operation		= 0x0C
+ACL		=	Accumulator Load to bus		= 0x0D
+ASL		=	Arithmetic Shift left		= 0x0E
+APC		=	Advance Program counter		= 0x0F
+CFC		=	Carry Clear check			= 0x10
+CFS		=	Carry Set check				= 0x11
+EQS		=	Equal Set check				= 0x12
+BIT		=	Bit test					= 0x13
+NEG		=	Negative Flag Set			= 0x14
+EQC		=	Equal Clear check			= 0x15
+POS		=	Negative Flag Clear			= 0x16
+PCS		=	Program Counter to stack	= 0x17
+PSS		=	Processor Status to stack	= 0x18
+BRK		=	Break flag to 1				= 0x19
+IRQ		=	Load IRQ vector from 0xfffe	= 0x1A
+SPC		=	Set Program Counter			= 0x1B
+OFC		=	Overflow Clear check		= 0x1C
+OFS		= 	Overflow Set check			= 0x1D
+CCF		=	Clear Carry Flag			= 0x1E
+CDM		=	Clear Decimal Mode			= 0x1F
+COF		=	Clear OverfLow Flag			= 0x20
+CID		=	Clear Interupt disable		= 0x21
+CPA		=	Compare Accumulator			= 0x22
+CPX		=	Compare X					= 0x23
+CPY		=	Compare Y					= 0x24
+XOR		=	Exclusive OR 				= 0x25
+IOR     =   Inclusive OR                = 0x26
+SUB     =   Subtract                    = 0x27
+DCM     =   Decrese Memory              = 0x28
+ICM     =   Increment Memory            = 0x29
+DEX     =   Decrement X                 = 0x2A
+DEY     =   Decrement Y                 = 0x2B
+ICM     =   Increment Memory            = 0x2C
+ICX     =   Increment X                 = 0x2D
+ICY     =   Increment Y                 = 0x2E
+PBS     =   Push bus to stack           = 0x2F
+SAC     =   Set Accumulator             = 0x30
+SEX     =   Set X                       = 0x31
+SEY     =   Set Y                       = 0x32
+ZPY     =   Zero Page Load + Y          = 0x33
+ASR     =   Arithmetic Shift Right      = 0x34
+NOP     =   No Operation                = 0x35
+PAS     =   Push Accumulator to Strack  = 0x36
+PPS     =   Push PS to Stack            = 0x37
+ASP     =   Pull Accumulator from stack = 0x38
+PSP     =   Pull PS from stack          = 0x39
+ROL     =   Rotate Left                 = 0x3A
+ROR     =   Rotate Right                = 0x3B
+SCF     =   Set Carry flag              = 0x3C
+SDF     =   Set Decimal flag            = 0x3D
+SID     =   Set Interupt Disable flag   = 0x3E
+ACS     =   Store Accumulator           = 0x3F
+XST     =   Store X                     = 0x40
+YST     =   Store Y                     = 0x41
+TAX     =   Transfer Accumulator to X   = 0x42
+TAY     =   Transfer Accumulator to Y   = 0x43
+TSX     =   Transfer Stack to X         = 0x44
+TXA     =   Transfer X to Accumulator   = 0x45
+TXS     =   Transfer X to stack         = 0x46
+TYA     =   Transfer Y to Accumulator   = 0x47 
+LDA     =   Load Accumulator            = 0x48
+
+
+
+code	Function								Memonic				Microcode										Length (original)	Length(actual)
+
+Add with carry									ADC
+
+0x69	Acc=Bus+Acc, PC+2						ADD,ISF						0x03,0x01								2					2		
+0x65	Bus=mem,Acc=Bus+Acc,PC+2				ZPL,ADD,ISF					0x04,0x03,0x01							3					3
+0x75	Bus=mem(X),Acc=Bus+Acc,PC+2				ZPX,ADD,ISF					0x05,0x03,0x01							4					3 +
+0x6D	Bus=mem(A),Acc=Bus+Acc,PC+3				SOP,ABL,ADD,ISF				0x02,0x06,0x03,0x01						4					4
+0x7D	Bus=mem(A+X),Acc=bus+Acc,PC+3			SOP,ABX,ADD,ISF				0x02,0x07,0x03,0x01						4+1 				4 
+0x79	Bus=mem(A+Y),Acc=bus+Acc,PC+3			SOP,ABY,ADD,ISF				0x02,0x08,0x03,0x01						4+1 				4 
+0x61	Bus=mem(IndX),Acc=Bus+Acc,PC+2			LIX,LXY,ADD,ISF				0x09,0x0A,0x03,0x01						6					4 +		
+0x71	Bus=mem(IndY),Acc=Bus+Acc,PC+2			LIX,LYX,ADD,ISF				0x09,0x0B,0x03,0x01						5+1 				4 +
+
+
+Logical AND										AND
+
+0x29	Acc=Bus&Acc,PC+2						AND,ISF						0x0C,0x01								2					2
+0x25	Bus=mem,Acc=Bus&Acc,PC+2				ZPL,AND,ISF					0x04,0x0C,0x01							3					3
+0x35	Bus=mem(X),Acc=Bus&Acc,PC+2				ZPX,AND,ISF					0x05,0x0C,0x01							4					3 +
+0x2D	Bus=mem(A),Acc=Bus&Acc,PC+3				SOP,ABL,AND,ISF				0x02,0x06,0x0C,0x01						4					4
+0x3D	Bus=mem(A+X),Acc=Bus&Acc,PC+3			SOP,ABX,AND,ISF				0x02,0x07,0x0C,0x01						4+1					4
+0x39	Bus=mem(A+Y),Acc=Bus&Acc,PC+3			SOP,ABY,AND,ISF				0x02,0x08,0x0C,0x01						4+1					4
+0x21	Bus=mem(IndX),Acc=Bus&Acc,PC+2			LIX,LXY,AND,ISF				0x09,0x0A,0x0C,0x01						6					4 +
+0x31	Bus=mem(IndY),Acc=Bus&Acc,PC+2			LIX,LYX,AND,ISF				0x09,0x0B,0x0C,0x01						5+1					4 +
+
+
+Arithmetic Shift Left							ASL
+
+0x0A	Bus=Acc,Acc=Acc→Bus,PC+1				ALC,ASL,ISF					0x0D,0x0E,0x01							2					3 -
+0x06	Bus=mem,Acc=Acc→Bus,PC+2				ZPL,ASL,ISF					0x04,0x0E,0x01							5					3 +
+0x16	Bus=mem(X),Acc=Acc→Bus,PC+2				ZPX,ASL,ISF					0x05,0x0E,0x01							6					3 +
+0x0E	Bus=mem(A),Acc=Acc→Bus,PC+3				SOP,ABL,ASL,ISF				0x02,0x06,0x0E,0x01						6					4 +
+0x1E	Bus=mem(A+X),Acc=Acc→Bus,PC+3			SOP,ABX,ASL,ISF				0x02,0x07,0x0E,0x01						7					4 +
+
+
+Branch if Carry Clear							BCC
+
+0x90	PC=(PC+mem)IF CF = 0,					CFC,APC,ISF					0x10,0x0F,0x01							2 + 1, +2 if pb		1 + 2 if true +
+
+
+Branch if Carry Set								BCS
+		
+0x90	PC=(PC+mem)IF CF = 1,					CFS,APC,ISF					0x11,0x0F,0x01							2 + 1, +2 if pb		1 + 2 if true +
+
+
+Branch if Equal									BEQ
+
+0x90	PC=(PC+mem)IF EQ = 1,					EQS,APC,ISF					0x12,0x0F,0x01							2 + 1, +2 if pb		1 + 2 if true +
+
+
+Bit test										BIT
+
+0x24	Bus=mem,ZF=Acc&Bus,PC+2					ZPL,BIT,ISF					0x04,0x13,0x01							3					3	
+0x2C	Bus=mem(A),ZF=Acc&Bus,PC+3				SOP,ABL,BIT,ISF				0x02,0x06,0x13,0x01						4					4
+
+
+Branch if Minus									BIM
+
+0x30	PC=(PC+mem)IF NG = 1,					NEG,APC,ISF					0x14,0x0F,0x01							2 + 1, +2 if pb		1 + 2 if true +
+	
+
+Branch if not Equal								BNE
+	
+0xD0	PC=(PC+mem)IF EQ = 0,					EQC,APC,ISF					0x15,0x0F,0x01							2 + 1, +2 if pb		1 + 2 if true +
+
+
+Branch if Positive								BPL
+
+0x10	PC=(PC+mem)IF NG = 0,					POS,APC,ISF					0x16,0x0F,0x01							2 + 1, +2 if pb		1 + 2 if true +
+
+
+Force Interrupt									BRK             (REVIEW!)
+	
+0x00	PC🡆STK, PS🡆STK,BF=1,PC=mem($FFFE/F)	PCS,PSS,BRK,IRQ,SPC,ISF		0x17,0x18,0x19,0x1A,0x1B,0x01	    	7					5
+
+
+Branch if overflow Clear						BVC
+
+0x90	PC=(PC+mem)IF OF = 0,					OFC,APC,ISF					0x1C,0x0F,0x01							2 + 1, +2 if pb		1 + 2 if true +
+
+
+Branch if overflow Set							BVS
+
+0x90	PC=(PC+mem)IF OF = 0,					OFS,APC,ISF					0x1D,0x0F,0x01							2 + 1, +2 if pb		1 + 2 if true +
+
+
+Clear Carry Flag								CLC				
+
+0x18	CF = 0,PC+1								CCF,ISF						0x1E,0x01								2					2
+
+
+Clear Decimal Mode								CLD
+
+0xD8	DM = 0,PC+1								CDM,ISF						0x1F,0x01								2					2
+
+
+Clear Interrupt Disable							CLI
+
+0x58	ID = 0,PC+1								CID,ISF						0x21,0x01								2					2
+
+
+Clear Overflow Flag								CLV
+
+0xB8											COF,ISF						0x20,0x01								2					2
+
+
+Compare											CMP
+
+0xC9	Bus-Acc,PC+2							CPA,ISF						0x22,0x01								2					2
+0xC5	Bus=mem,Bus-Acc,PC+2					ZPL,CPA,ISF					0x04,0x22,0x01							3					3
+0xD5	Bus=mem(X),Bus-Acc,PC+2					ZPX,CPA,ISF					0x05,0x22,0x01							4					4
+0xCD	Bus=mem(A),Bus-Acc,PC+3					SOP,ABL,CPA,ISF				0x02,0x06,0x22,0x01						4					4
+0xDD	Bus=mem(A+X),Bus-Acc,PC+3				SOP,ABX,CPA,ISF				0x02,0x07,0x22,0x01						4 + 1				4
+0xD9	Bus=mem(A+Y),Bus-Acc,PC+3				SOP,ABY,CPA,ISF				0x02,0x08,0x22,0x01						4 + 1				4
+0xC1	Bus=mem(IndX),Bus-Acc,PC+2				LIX,LXY,CPA,ISF				0x09,0x0A,0x22,0x01						6 					4
+0xD1	Bus=mem(IndY),Bus-Acc,PC+2				LIX,LYX,CPA,ISF				0x09,0x0B,0x22,0x01						5 + 1				4
+
+
+Compare X register								CPX
+
+0xE0	Bus-Acc,PC+2							CPX,ISF						0x23,0x01								2					2
+0xE4	Bus=mem,Bus-Acc,PC+2					ZPL,CPX,ISF					0x04,0x23,0x01							3					3
+0xEC	Bus=mem(A),Bus-Acc,PC+3					SOP,ABL,CPX,ISF				0x02,0x06,0x23,0x01						4					4
+
+
+Compare Y register								CPY
+
+0xE0	Bus-Acc,PC+2							CPY,ISF						0x23,0x01								2					2
+0xE4	Bus=mem,Bus-Acc,PC+2					ZPL,CPY,ISF					0x04,0x23,0x01							3					3
+0xEC	Bus=mem(A),Bus-Acc,PC+3					SOP,ABL,CPY,ISF				0x02,0x06,0x23,0x01						4					4
+
+
+Decrement Memory								DEC
+
+0xC6	mem=mem-1,PC+2		                    ZPL,DCM,ISF		            0x04,0x28,0x01	                        5                   3+		                
+0xD6	mem(X)=mem-1,PC+2                       ZPX,DCM,ISF                 0x05,0x28,0x01                          6                   3+
+0xCE	mem(A)=mem-1,PC+3                       SOP,ABL,DCM,ISF             0x02,0x06,0x28,0x01                     6                   4+
+0xDE	mem(A+X)=mem-1,PC+3                     SOP,ABX,DCM,ISF             0x02,0x07,0x28,0x01                     7                   4+
+
+Decrement X Register							DEX
+
+0xCA	X=X-1,PC+1                              DEX,ISF                     0x2A,0x01                               2                   2
+
+
+Decrement Y Register							DEY
+
+0x88	Y=Y-1,PC+1                              DEY,ISF                     0x2B,0x01                               2                   2
+
+
+Exclusive Or									EOR
+
+0x49	Acc=Bus ⊕ Acc, PC+2				    	XOR,ISF						0x25,0x01								2					2		
+0x45	Bus=mem,Acc=Bus ⊕ Acc,PC+2		    	ZPL,XOR,ISF					0x04,0x25,0x01							3					3
+0x55	Bus=mem(X),Acc=Bus ⊕ Acc,PC+2			ZPX,XOR,ISF					0x05,0x25,0x01							4					3 +
+0x4D	Bus=mem(A),Acc=Bus ⊕ Acc,PC+3			SOP,ABL,XOR,ISF				0x02,0x06,0x25,0x01						4					4
+0x5D	Bus=mem(A+X),Acc=bus ⊕ Acc,PC+3	    	SOP,ABX,XOR,ISF				0x02,0x07,0x25,0x01						4+1 				4 
+0x59	Bus=mem(A+Y),Acc=bus ⊕ Acc,PC+3		    SOP,ABY,XOR,ISF				0x02,0x08,0x25,0x01						4+1 				4 
+0x41	Bus=mem(IndX),Acc=Bus ⊕ Acc,PC+2		LIX,LXY,XOR,ISF				0x09,0x0A,0x25,0x01						6					4 +		
+0x51	Bus=mem(IndY),Acc=Bus ⊕ Acc,PC+2		LIX,LYX,XOR,ISF				0x09,0x0B,0x25,0x01						5+1 				4 +
+
+
+Increment Memory								INC
+
+0xE6	mem=mem+1,PC+2		                    ZPL,ICM,ISF		            0x04,0x2C,0x01	                        5                   3+		                
+0xF6	mem(X)=mem+1,PC+2                       ZPX,ICM,ISF                 0x05,0x2C,0x01                          6                   3+
+0xEE	mem(A)=mem+1,PC+3                       SOP,ABL,ICM,ISF             0x02,0x06,0x2C,0x01                     6                   4+
+0xFE	mem(A+X)=mem+1,PC+3                     SOP,ABX,ICM,ISF             0x02,0x07,0x2C,0x01                     7                   4+
+
+
+Increment X register							INX
+
+0xE8	X=X+1,PC+1                              ICX,ISF                     0x2D,0x01                               2                   2
+
+
+Increment Y Register							INY
+
+0xC8	Y=Y+1,PC+1                              ICY,ISF                     0x2E,0x01                               2                   2       
+
+
+Jump											JMP
+
+0x4C	PC=mem                                  SOP,SPC,ISF                 0x02,0x1B,0x01                          3                   3
+0x6C	PC=mem                                  SOP,ABL,SOP,SPC,ISF         0x02,0x06,0x02,0x1B,0x01                5                   5
+
+
+Jump to Subroutene								JSR                 (REVIEW)
+
+0x20	stk = ra-1,PC=ins                       
+
+
+Load Accumulator								LDA
+
+0xA9    Acc=bus,                                SAC,ISF                     0x30,0x01
+0xA5    Bus=mem,Acc=bus                         ZPL,SAC,ISF                 0x04,0x30,0x01
+0xB5    Bus=mem(X)Acc=bus                       ZPX,SAC,ISF                 0x05,0x30,0x01
+0xAD    Bus=mem(A)Acc=bus                       SOP,ABL,SAC,ISF             0x02,0x06,0x30,0x01
+0xBD    Bus=mem(A+X)Acc=bus                     SOP,ABX,SAC,ISF             0x02,0x07,0x30,0x01
+0xB9    Bus=mem(A+Y)Acc=bus                     SOP,ABY,SAC,ISF             0x02,0x08,0x30,0x01
+0xA1    Bus=mem(indX)Acc=bus                    LIX,LXY,SAC,ISF             0x09,0x0A,0x30,0x01
+0xB1    Bus=mem(indy)Acc=bus                    LIX,LYX,SAC,ISF             0x09,0x0B,0x30,0x01
+
+
+Load X register									LDX
+
+0xA2    X=Bus                                   SEX,ISF                     0x31,0x01
+0xA6    Bus=mem,X=bus                           ZPL,SEX,ISF                 0x04,0x31,0x01
+0xB6    Bus=mem(Y),X=Bus                        ZPY,SEX,ISF                 0x05,0x31,0x01
+0xAE    Bus=mem(A),X=Bus                        SOP,ABL,SEX,ISF             0x02,0x06,0x31,0x01
+0xBE    Bus=mem(A+Y),X=Bus                      SOP,ABY,SEX,ISF             0x02,0x07,0x31,0x01
+
+
+Load Y register									LDY
+
+0xA0    Y=Bus                                   SEY,ISF                     0x32,0x01
+0xA4    Bus=mem,Y=bus                           ZPL,SEY,ISF                 0x04,0x31,0x01
+0xB4    Bus=mem(X),Y=bus                        ZPX,SEY,ISF                 0x05,0x31,0x01
+0xAC    Bus=mem(A),Y=bus                        SOP,ABL,SEY,ISF             0x02,0x06,0x31,0x01
+0xBC    Bus=mem(A+X),Y=bus                      SOP,ABX,SEY,ISF             0x02,0x07,0x31,0x01
+
+
+Logical Shift Right						    	LSR
+
+0x4A    Acc=Acc→                                ASR,ISF                     0x34,0x01                
+0x46    mem=mem→                                ZPL,ASR,ISF                 0x04,0x34,0x01
+0x56    mem(X)=mem→                             ZPX,ASR,ISF                 0x05,0x34,0x01
+0x4E    mem(A)=mem→                             SOP,ABL,ASR,ISF             0x02,0x06,0x34,0x01
+0x5E    mem(A+X)=mem→                           SOP,ABX,ASR,ISF             0x02,0x07,0x34,0x01
+
+
+No Operation									NOP
+
+0xEA    PC+1                                    NOP,ISF                     0x35,0x01
+
+
+Logical Inclusive Or							ORA
+
+0x09	Acc=Bus ∥ Acc, PC+2				    	IOR,ISF						0x26,0x01								2					2		
+0x05	Bus=mem,Acc=Bus ∥ Acc,PC+2		    	ZPL,IOR,ISF					0x04,0x26,0x01							3					3
+0x15	Bus=mem(X),Acc=Bus ∥ Acc,PC+2			ZPX,IOR,ISF					0x05,0x26,0x01							4					3 +
+0x0D	Bus=mem(A),Acc=Bus ∥ Acc,PC+3			SOP,ABL,IOR,ISF				0x02,0x06,0x26,0x01						4					4
+0x1D	Bus=mem(A+X),Acc=bus ∥ Acc,PC+3	    	SOP,ABX,IOR,ISF				0x02,0x07,0x26,0x01						4+1 				4 
+0x19	Bus=mem(A+Y),Acc=bus ∥ Acc,PC+3		    SOP,ABY,IOR,ISF				0x02,0x08,0x26,0x01						4+1 				4 
+0x01	Bus=mem(IndX),Acc=Bus ∥ Acc,PC+2		LIX,LXY,IOR,ISF				0x09,0x0A,0x26,0x01						6					4 +		
+0x11	Bus=mem(IndY),Acc=Bus ∥ Acc,PC+2		LIX,LYX,IOR,ISF				0x09,0x0B,0x26,0x01						5+1 				4 +
+
+
+Push Accumulator								PHA
+
+0x48    Stk = Acc,PC+1                          PAS,ISF                     0x36,0x01
+
+
+Push Processor Status							PHP
+
+0x08    Stk = PS,PC+1                           PPS,ISF                     0x37,0x01
+
+
+Pull Accumulator								PLA
+
+0x68    Acc = Stk,PC+1                          ASP,ISF                     0x38,0x01
+
+
+Pull Processor status							PLP
+
+0x28    PS = Stk,PC+1                           PSP,ISF                     0x39,0x01
+
+
+Rotate Left										ROL
+
+0x2A    Acc=Acc↻                                ROL,ISF                     0x3A,0x01
+0x26    mem=mem↻                                ZPL,ROL,ISF                 0x04,0x3A,0x1
+0x36    mem(X)=mem↻                             ZPX,ROL,ISF                 0x05,0x3A,0x1
+0x2E    mem(A)=mem↻                             SOP,ABL,ROL,ISF             0x02,0x06,0x3A,0x01
+0x3E    mem(A+X)=mem↻                           SOP,ABX,ROL,ISF             0x02,0x07,0x3A,0x01
+
+
+Rotate right									ROR
+
+0x6A    Acc=Acc↺                                ROR,ISF                     0x3B,0x01
+0x66    mem=mem↺                                ZPL,ROR,ISF                 0x04,0x3B,0x01
+0x76    mem(X)=mem↺                             ZPX,ROR,ISF                 0x05,0x3B,0x01
+0x6E    mem(A)=mem↺                             SOP,ABL,ROR,ISF             0x02,0x06,0x3B,0x01
+0x7E    mem(A+X)=mem↺                           SOP,ABX,ROR,ISF             0x02,0x07,0x3B,0x01
+
+
+Return from Interupt							RTI
+            (REVIEW!)
+0x40    PF=stk,PC=stk,PC+1                          
+
+
+Return From Subroutine							RTS
+            (REVIEW!)
+0x60    PC=stk,PC+1
+
+
+Subtract with Carry								SBC
+
+0xE9	Acc=Bus-Acc, PC+2						SUB,ISF						0x27,0x01								2					2		
+0xE5	Bus=mem,Acc=Bus-Acc,PC+2				ZPL,SUB,ISF					0x04,0x27,0x01							3					3
+0xF5	Bus=mem(X),Acc=Bus-Acc,PC+2				ZPX,SUB,ISF					0x05,0x27,0x01							4					3 +
+0xED	Bus=mem(A),Acc=Bus-Acc,PC+3				SOP,ABL,SUB,ISF				0x02,0x06,0x27,0x01						4					4
+0xFD	Bus=mem(A+X),Acc=bus-Acc,PC+3			SOP,ABX,SUB,ISF				0x02,0x07,0x27,0x01						4+1 				4 
+0xF9	Bus=mem(A+Y),Acc=bus-Acc,PC+3			SOP,ABY,SUB,ISF				0x02,0x08,0x27,0x01						4+1 				4 
+0xE1	Bus=mem(IndX),Acc=Bus-Acc,PC+2			LIX,LXY,SUB,ISF				0x09,0x0A,0x27,0x01						6					4 +		
+0xF1	Bus=mem(IndY),Acc=Bus-Acc,PC+2			LIX,LYX,SUB,ISF				0x09,0x0B,0x27,0x01						5+1 				4 +
+
+
+Set Carry flag									SEC
+
+0x38    CF=1,PC+1                               SCF,ISF                     0x3C,0x01
+
+
+Set Decimal flag								SED
+
+0xF8    DF=1,PC+1                               SDF,ISF                     0x3D,0x01
+
+
+Set Interupt Disable							SEI
+
+0x78    ID=1,PC+1                               SID,ISF                     0x3E,0x01
+
+
+Store Accumulator 								STA
+
+0x85    mem=Acc,PC+2                            LDA,ACS,ISF                 0x
+0x95    mem(X)=Acc,PC+2                         LDX,ACS,ISF
+0x8D    mem(A)=Acc,PC+3                         SOP,ABL,ACS,ISF
+0x9D    mem(A+X)=Acc,PC+3                       SOP,ABX,ACS,ISF
+0x99    mem(A+Y)=Acc,PC+3                       SOP,ABY,ACS,ISF
+0x81    mem(indX)=Acc,PC+2                      LIX,LXY,ACS,ISF
+0x91    mem(indY)=Acc,PC+2                      LIX,LYX,ACS,ISF
+
+
+Store X Register								STX
+
+0x86    mem=X                                   LDA,XST,ISF
+0x96    mem(Y)=X                                LDY,XST,ISF
+0x8E    mem(A)=X                                SOP,ABL,XST,ISF
+
+
+Store Y Register								STY
+
+0x84    mem=Y                                   LDA,YST,ISF
+0x94    mem(X)=Y                                LDX,YST,ISF
+0x8C    mem(A)=Y                                SOP,ABL,YST,ISF
+
+
+Transfer Accumulator to X						TAX
+
+0xAA    X = Acc,PC+1                            TAX,ISF
+
+
+Transfer Accumulator to Y						TAY
+
+0xA8    Y = Acc,PC+1                            TAY,ISF
+
+
+Transfer stack pointer to X						TSX
+
+0xBA    X = SP                                  TSX,ISF
+
+
+Transfer X to Accumulator 						TXA
+
+0x8A    Acc = X                                 TXA,ISF
+
+
+Transfer X to Stack Pointer						TXS
+
+0x9A    SP = X                                  TXS,ISF
+
+
+Transfer Y to Accumulator						TYA
+
+0x98    Acc = Y                                 TYA,ISF
+
